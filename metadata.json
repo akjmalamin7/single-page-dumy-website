@@ -1,0 +1,6 @@
+{
+  "name": "Single Page E-Commerce",
+  "description": "একটি আকর্ষণীয় সিঙ্গেল পেজ ই-কমার্স অ্যাপ্লিকেশন যেখানে একই পেজে প্রোডাক্ট সিলেকশন, কার্ট ম্যানেজমেন্ট এবং চেকআউট সম্পন্ন করার সুবিধা রয়েছে।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
