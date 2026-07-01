@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import { CheckCircle, MapPin, Phone, User, Calendar, Tag, CreditCard, Printer, ShoppingBag, Truck } from 'lucide-react';
 import { Order } from '../types';
 
@@ -24,12 +23,8 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
   };
 
   return (
-    <motion.div
+    <div
       id={`order-receipt-${order.id}`}
-      initial={{ opacity: 0, scale: 0.97 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.97 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
       className="max-w-xl mx-auto bg-white rounded-2xl shadow-md overflow-hidden border border-slate-200 print:border-0 print:shadow-none my-4 print:my-0"
     >
       {/* Receipt Banner */}
@@ -38,14 +33,11 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8" />
         <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full -ml-6 -mb-6" />
         
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200, delay: 0.05 }}
+        <div
           className="mx-auto w-12 h-12 bg-white/15 backdrop-blur-md rounded-full flex items-center justify-center mb-2.5"
         >
           <CheckCircle className="w-7 h-7 text-white" />
-        </motion.div>
+        </div>
 
         <h2 className="text-lg font-black mb-0.5">
           {lang === 'bn' ? 'অর্ডারটি সফলভাবে গৃহীত হয়েছে!' : 'Order Placed Successfully!'}
@@ -82,7 +74,7 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
               <span className="text-[10px] font-bold mt-1 text-indigo-700">
                 {lang === 'bn' ? 'অর্ডার গৃহীত' : 'Placed'}
               </span>
-              <span className="text-[8px] text-slate-400">{lang === 'bn' ? 'এইমাত্র' : 'Just now'}</span>
+              <span className="text-[8px] text-slate-500">{lang === 'bn' ? 'এইমাত্র' : 'Just now'}</span>
             </div>
 
             {/* Step 2 */}
@@ -93,7 +85,7 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
               <span className="text-[10px] font-bold mt-1 text-indigo-700">
                 {lang === 'bn' ? 'পেমেন্ট যাচাই' : 'Verified'}
               </span>
-              <span className="text-[8px] text-slate-400">{lang === 'bn' ? 'চলমান' : 'Verifying'}</span>
+              <span className="text-[8px] text-slate-500">{lang === 'bn' ? 'চলমান' : 'Verifying'}</span>
             </div>
 
             {/* Step 3 */}
@@ -101,10 +93,10 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
               <div className="w-6.5 h-6.5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[10px]">
                 ৩
               </div>
-              <span className="text-[10px] font-medium mt-1 text-slate-500">
+              <span className="text-[10px] font-medium mt-1 text-slate-600">
                 {lang === 'bn' ? 'প্যাকিং চলছে' : 'Packing'}
               </span>
-              <span className="text-[8px] text-slate-400">{lang === 'bn' ? 'অপেক্ষমান' : 'Pending'}</span>
+              <span className="text-[8px] text-slate-500">{lang === 'bn' ? 'অপেক্ষমান' : 'Pending'}</span>
             </div>
 
             {/* Step 4 */}
@@ -112,10 +104,10 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
               <div className="w-6.5 h-6.5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[10px]">
                 ৪
               </div>
-              <span className="text-[10px] font-medium mt-1 text-slate-500">
+              <span className="text-[10px] font-medium mt-1 text-slate-600">
                 {lang === 'bn' ? 'ডেলিভারড' : 'Delivered'}
               </span>
-              <span className="text-[8px] text-slate-400">{lang === 'bn' ? 'অপেক্ষমান' : 'Pending'}</span>
+              <span className="text-[8px] text-slate-500">{lang === 'bn' ? 'অপেক্ষমান' : 'Pending'}</span>
             </div>
           </div>
         </div>
@@ -139,7 +131,7 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
                     <span className="font-bold text-slate-800 line-clamp-1 text-xs">
                       {lang === 'bn' ? item.product.nameBn : item.product.name}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-medium">
+                    <span className="text-[10px] text-slate-500 font-medium">
                       ৳{item.product.price} x {item.quantity}
                     </span>
                   </div>
@@ -181,21 +173,21 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Customer / Delivery Card */}
           <div className="border border-slate-200 p-3 rounded-xl space-y-1.5">
-            <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+            <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
               <MapPin className="w-3 h-3 text-indigo-600" />
               {lang === 'bn' ? 'ডেলিভারি ঠিকানা' : 'Delivery Details'}
             </h5>
             <div className="space-y-1 text-xs text-slate-700 font-medium">
               <div className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 <span className="font-bold text-slate-800">{order.customerInfo.name}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 <span>{order.customerInfo.phone}</span>
               </div>
               <div className="flex items-start gap-1.5 pt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
                 <span className="line-clamp-2 leading-tight text-[11px]">
                   {order.customerInfo.address}, {order.customerInfo.city}
                 </span>
@@ -206,25 +198,25 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
           {/* Payment Card */}
           <div className="border border-slate-200 p-3 rounded-xl space-y-1.5 flex flex-col justify-between">
             <div>
-              <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+              <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                 <CreditCard className="w-3 h-3 text-indigo-600" />
                 {lang === 'bn' ? 'পেমেন্ট বিবরণ' : 'Payment Details'}
               </h5>
               <div className="space-y-1 text-xs text-slate-700 font-medium mt-1.5">
                 <div className="flex justify-between">
-                  <span className="text-[11px] text-slate-400">{lang === 'bn' ? 'পেমেন্ট মাধ্যম:' : 'Method:'}</span>
+                  <span className="text-[11px] text-slate-500">{lang === 'bn' ? 'পেমেন্ট মাধ্যম:' : 'Method:'}</span>
                   <span className="font-bold text-slate-800">{getPaymentName(order.customerInfo.paymentMethod)}</span>
                 </div>
                 
                 {order.customerInfo.bkashNumber && (
                   <div className="flex justify-between">
-                    <span className="text-[11px] text-slate-400">{lang === 'bn' ? 'ওয়ালেট নম্বর:' : 'Wallet No:'}</span>
+                    <span className="text-[11px] text-slate-500">{lang === 'bn' ? 'ওয়ালেট নম্বর:' : 'Wallet No:'}</span>
                     <span className="font-mono font-bold text-slate-800">{order.customerInfo.bkashNumber}</span>
                   </div>
                 )}
                 {order.customerInfo.bkashTrxId && (
                   <div className="flex justify-between">
-                    <span className="text-[11px] text-slate-400">{lang === 'bn' ? 'ট্রানজেকশন আইডি:' : 'TrxID:'}</span>
+                    <span className="text-[11px] text-slate-500">{lang === 'bn' ? 'ট্রানজেকশন আইডি:' : 'TrxID:'}</span>
                     <span className="font-mono text-[10px] font-bold text-indigo-700 bg-indigo-50 px-1 rounded uppercase">
                       {order.customerInfo.bkashTrxId}
                     </span>
@@ -232,7 +224,7 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
                 )}
 
                 <div className="flex justify-between items-center pt-1 border-t border-slate-100 mt-1">
-                  <span className="text-[9px] text-slate-400 flex items-center gap-0.5">
+                  <span className="text-[9px] text-slate-500 flex items-center gap-0.5">
                     <Calendar className="w-2.5 h-2.5" />
                     {lang === 'bn' ? 'তারিখ:' : 'Date:'}
                   </span>
@@ -278,6 +270,6 @@ export default function OrderReceipt({ order, onNewShopping, lang }: OrderReceip
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -47,12 +47,24 @@ export function getEventLog() {
   return eventLog;
 }
 
+// Resilient helper to read environment variables (Vite & Next.js safe)
+function getEnv(key: string): string {
+  if (typeof process !== "undefined" && process.env && process.env[key]) {
+    return process.env[key] || "";
+  }
+  if (typeof import.meta !== "undefined" && (import.meta as any).env && (import.meta as any).env[key]) {
+    return (import.meta as any).env[key] || "";
+  }
+  return "";
+}
+
 // Configurable tracking keys with fallbacks/reactive updates
-let activeGaId = (import.meta as any).env.VITE_GA_MEASUREMENT_ID || '';
-let activePixelId = (import.meta as any).env.VITE_META_PIXEL_ID || '';
+let activeGaId = getEnv("VITE_GA_MEASUREMENT_ID") || getEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID") || "";
+let activePixelId = getEnv("VITE_META_PIXEL_ID") || getEnv("NEXT_PUBLIC_META_PIXEL_ID") || "";
 
 // Fetch and sync tracking config from the server
 export async function syncTrackingConfigFromServer() {
+  if (typeof window === "undefined") return;
   try {
     const res = await fetch("/api/tracking-config");
     if (res.ok) {
@@ -61,30 +73,32 @@ export async function syncTrackingConfigFromServer() {
       if (data.pixelId) activePixelId = data.pixelId;
       
       // Update local storage
-      localStorage.setItem('amar_bazar_ga_id', activeGaId);
-      localStorage.setItem('amar_bazar_pixel_id', activePixelId);
+      window.localStorage.setItem('amar_bazar_ga_id', activeGaId);
+      window.localStorage.setItem('amar_bazar_pixel_id', activePixelId);
     }
   } catch (err) {
     console.error("Error syncing tracking configuration from server:", err);
   }
 }
 
-// Load custom persistent IDs from localStorage if defined
-try {
-  const savedGa = localStorage.getItem('amar_bazar_ga_id');
-  const savedPixel = localStorage.getItem('amar_bazar_pixel_id');
-  if (savedGa) activeGaId = savedGa;
-  if (savedPixel) activePixelId = savedPixel;
-} catch (e) {
-  console.error(e);
+// Load custom persistent IDs from localStorage if defined (browser-safe)
+if (typeof window !== "undefined") {
+  try {
+    const savedGa = window.localStorage.getItem('amar_bazar_ga_id');
+    const savedPixel = window.localStorage.getItem('amar_bazar_pixel_id');
+    if (savedGa) activeGaId = savedGa;
+    if (savedPixel) activePixelId = savedPixel;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export function getActiveIds() {
   return {
     gaId: activeGaId,
     pixelId: activePixelId,
-    envGaId: (import.meta as any).env.VITE_GA_MEASUREMENT_ID || '',
-    envPixelId: (import.meta as any).env.VITE_META_PIXEL_ID || '',
+    envGaId: getEnv("VITE_GA_MEASUREMENT_ID") || getEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID") || "",
+    envPixelId: getEnv("VITE_META_PIXEL_ID") || getEnv("NEXT_PUBLIC_META_PIXEL_ID") || "",
   };
 }
 
@@ -98,10 +112,16 @@ export async function updateActiveIds(
   activeGaId = gaId.trim();
   activePixelId = pixelId.trim();
   
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem('amar_bazar_ga_id', activeGaId);
+      window.localStorage.setItem('amar_bazar_pixel_id', activePixelId);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   try {
-    localStorage.setItem('amar_bazar_ga_id', activeGaId);
-    localStorage.setItem('amar_bazar_pixel_id', activePixelId);
-    
     // Save to server-side code storage securely (Access Token & API Secret are NEVER saved in localStorage!)
     await fetch("/api/tracking-config", {
       method: "POST",
@@ -123,9 +143,9 @@ export async function updateActiveIds(
   emitLog('IDs Updated', 'System', { gaId: activeGaId, pixelId: activePixelId });
 }
 
-// Inject Google Tag script dynamically
+// Inject Google Tag script dynamically (browser-safe)
 function injectGoogleTag(gaId: string) {
-  if (!gaId) return;
+  if (typeof document === "undefined" || !gaId) return;
   
   // Remove existing scripts if any
   const existingScript = document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${gaId}"]`);
@@ -146,9 +166,9 @@ function injectGoogleTag(gaId: string) {
   document.head.appendChild(initScript);
 }
 
-// Inject Meta/Facebook Pixel script dynamically
+// Inject Meta/Facebook Pixel script dynamically (browser-safe)
 function injectMetaPixel(pixelId: string) {
-  if (!pixelId) return;
+  if (typeof document === "undefined" || !pixelId) return;
 
   const existingScript = document.getElementById('meta-pixel-script');
   if (existingScript) return;
@@ -167,19 +187,19 @@ function injectMetaPixel(pixelId: string) {
     fbq('init', '${pixelId}');
     fbq('track', 'PageView');
   `;
-  document.head.appendChild(initScriptNoScript(pixelId));
-  document.head.appendChild(script);
-}
-
-function initScriptNoScript(pixelId: string): HTMLElement {
+  
+  // Insert noscript element
   const noscript = document.createElement('noscript');
   noscript.id = 'meta-pixel-noscript';
   noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1" />`;
-  return noscript;
+  document.head.appendChild(noscript);
+  document.head.appendChild(script);
 }
 
 // Complete initialization call
 export async function initializeTracking() {
+  if (typeof window === "undefined") return;
+
   // Sync first to get any persistent server configurations
   await syncTrackingConfigFromServer();
 
@@ -190,7 +210,7 @@ export async function initializeTracking() {
     console.log(`[Google Tag] Configured with ID: ${gaId}`);
     emitLog('Initialized Tracking', 'Google Tag', { measurementId: gaId });
   } else {
-    console.log(`[Google Tag] Skipped. No VITE_GA_MEASUREMENT_ID provided.`);
+    console.log(`[Google Tag] Skipped. No measurement ID provided.`);
   }
 
   if (pixelId) {
@@ -198,7 +218,7 @@ export async function initializeTracking() {
     console.log(`[Meta Pixel] Configured with ID: ${pixelId}`);
     emitLog('Initialized Tracking', 'Meta Pixel', { pixelId });
   } else {
-    console.log(`[Meta Pixel] Skipped. No VITE_META_PIXEL_ID provided.`);
+    console.log(`[Meta Pixel] Skipped. No Pixel ID provided.`);
   }
 
   // If none configured, log a system event to notify user
@@ -209,6 +229,7 @@ export async function initializeTracking() {
 
 // Dispatch event server-side to Facebook Conversions API & GA4 Measurement Protocol
 async function dispatchServerEvent(eventName: string, customData: any) {
+  if (typeof window === "undefined") return;
   try {
     const res = await fetch("/api/track", {
       method: "POST",
@@ -249,7 +270,8 @@ async function dispatchServerEvent(eventName: string, customData: any) {
 }
 
 // Trigger standard PageView event
-export function trackPageView(url: string = window.location.pathname) {
+export function trackPageView(url: string) {
+  if (typeof window === "undefined") return;
   const { gaId, pixelId } = getActiveIds();
 
   // Google Analytics PageView
@@ -274,6 +296,7 @@ export function trackPageView(url: string = window.location.pathname) {
 
 // Trigger product Quick View event (ViewContent)
 export function trackViewContent(id: string, name: string, category: string, price: number) {
+  if (typeof window === "undefined") return;
   const { gaId, pixelId } = getActiveIds();
 
   // Google Analytics View Item
@@ -321,6 +344,7 @@ export function trackViewContent(id: string, name: string, category: string, pri
 
 // Trigger Add To Cart event
 export function trackAddToCart(id: string, name: string, category: string, price: number) {
+  if (typeof window === "undefined") return;
   const { gaId, pixelId } = getActiveIds();
 
   // Google Analytics Add to Cart
@@ -368,6 +392,7 @@ export function trackAddToCart(id: string, name: string, category: string, price
 
 // Trigger Begin Checkout / Initiate Checkout event
 export function trackInitiateCheckout(totalItems: number, totalPrice: number, itemNames: string[]) {
+  if (typeof window === "undefined") return;
   const { gaId, pixelId } = getActiveIds();
 
   // Google Analytics Begin Checkout
@@ -410,6 +435,7 @@ export function trackInitiateCheckout(totalItems: number, totalPrice: number, it
 
 // Trigger Purchase completion event
 export function trackPurchase(orderId: string, totalPrice: number, itemNames: string[], items: any[]) {
+  if (typeof window === "undefined") return;
   const { gaId, pixelId } = getActiveIds();
 
   // Google Analytics Purchase

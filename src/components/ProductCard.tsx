@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import { ShoppingCart, Star, Eye } from 'lucide-react';
 import { Product } from '../types';
 
@@ -16,14 +15,9 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
     : 0;
 
   return (
-    <motion.div
+    <div
       id={`product-card-${product.id}`}
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      whileHover={{ y: -3, transition: { duration: 0.15 } }}
-      className="bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200 transition-all duration-200 flex flex-col h-full relative group"
+      className="bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200 transition-all duration-200 flex flex-col h-full relative group hover:-translate-y-1"
     >
       {/* Discount Badge */}
       {discountPercentage > 0 && (
@@ -34,13 +28,11 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
 
       {/* Product Image Stage */}
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-50 group-hover:cursor-pointer" onClick={() => onQuickView(product)}>
-        <motion.img
+        <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
           referrerPolicy="no-referrer"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
         />
         <div className="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
           <button
@@ -51,6 +43,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
             }}
             className="p-2 bg-white text-slate-800 rounded-full hover:bg-white hover:text-indigo-600 transition-colors shadow-md hover:scale-105 transform duration-150"
             title={lang === 'bn' ? 'দ্রুত দেখুন' : 'Quick View'}
+            aria-label={lang === 'bn' ? 'দ্রুত দেখুন' : 'Quick View'}
           >
             <Eye className="w-4 h-4" />
           </button>
@@ -62,7 +55,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
         <div>
           {/* Category & Rating */}
           <div className="flex items-center justify-between gap-2 mb-1">
-            <span className="text-[9px] font-mono uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded font-bold">
+            <span className="text-[9px] font-mono uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-bold">
               {lang === 'bn' 
                 ? (product.category === 'gadgets' ? 'গ্যাজেট' : product.category === 'fashion' ? 'ফ্যাশন' : product.category === 'lifestyle' ? 'লাইফস্টাইল' : 'অ্যাক্সেসরিজ')
                 : product.category}
@@ -70,7 +63,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
             <div className="flex items-center gap-0.5">
               <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
               <span className="text-[10px] font-bold text-slate-700">{product.rating}</span>
-              <span className="text-[9px] text-slate-400">({product.reviewsCount})</span>
+              <span className="text-[9px] text-slate-500">({product.reviewsCount})</span>
             </div>
           </div>
 
@@ -80,7 +73,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
           </h3>
 
           {/* Short Description */}
-          <p className="text-[11px] text-slate-500 line-clamp-2 leading-tight mb-2">
+          <p className="text-[11px] text-slate-600 line-clamp-2 leading-tight mb-2">
             {lang === 'bn' ? product.descriptionBn : product.description}
           </p>
         </div>
@@ -90,7 +83,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
             <div className="flex flex-col">
               {product.originalPrice && (
-                <span className="text-[10px] text-slate-400 line-through leading-none mb-0.5">
+                <span className="text-[10px] text-slate-500 line-through leading-none mb-0.5">
                   ৳{product.originalPrice}
                 </span>
               )}
@@ -124,6 +117,6 @@ export default function ProductCard({ product, onAddToCart, onQuickView, lang }:
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

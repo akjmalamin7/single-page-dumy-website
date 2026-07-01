@@ -1,5 +1,6 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, 
   Search, 
@@ -21,11 +22,11 @@ import {
   ChevronDown,
   Star
 } from 'lucide-react';
-import { products, shippingCharges, promoCodes } from './data';
-import { Product, CartItem, Order, Category } from './types';
-import ProductCard from './components/ProductCard';
-import OrderReceipt from './components/OrderReceipt';
-import OrderHistory from './components/OrderHistory';
+import { products, shippingCharges, promoCodes } from '../data';
+import { Product, CartItem, Order, Category } from '../types';
+import ProductCard from '../components/ProductCard';
+import OrderReceipt from '../components/OrderReceipt';
+import OrderHistory from '../components/OrderHistory';
 import { 
   initializeTracking, 
   trackPageView, 
@@ -33,8 +34,8 @@ import {
   trackAddToCart, 
   trackInitiateCheckout, 
   trackPurchase 
-} from './lib/tracking';
-import { PixelDebugger } from './components/PixelDebugger';
+} from '../lib/tracking';
+import { PixelDebugger } from '../components/PixelDebugger';
 
 export default function App() {
   // Localization state
@@ -264,7 +265,6 @@ export default function App() {
 
       const newCart = [...prevCart];
       const item = newCart[itemIndex];
-      const origProduct = products.find(p => p.id === productId)!;
 
       if (action === 'increment') {
         if (tempStock[productId] <= 0) {
@@ -478,9 +478,9 @@ export default function App() {
             <div>
               <h1 className="text-sm md:text-base font-black text-slate-900 tracking-tight leading-none flex items-center gap-1">
                 {lang === 'bn' ? 'আমার বাজার' : 'Amar Bazar'}
-                <span className="text-[9px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-black uppercase tracking-wider hidden sm:inline">PRO</span>
+                <span className="text-[9px] text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded font-black uppercase tracking-wider hidden sm:inline">PRO</span>
               </h1>
-              <span className="text-[9px] text-slate-400 font-bold hidden sm:block mt-0.5">
+              <span className="text-[9px] text-slate-500 font-bold hidden sm:block mt-0.5">
                 {lang === 'bn' ? 'দ্রুত ডেলিভারি এবং ১০০% জেনুইন প্রোডাক্টস' : 'Fast Delivery & 100% Genuine Products'}
               </span>
             </div>
@@ -510,6 +510,7 @@ export default function App() {
               id="lang-toggle-btn"
               onClick={() => setLang(prev => prev === 'bn' ? 'en' : 'bn')}
               className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition-all"
+              aria-label={lang === 'bn' ? 'Switch language to English' : 'ভাষা পরিবর্তন করুন বাংলাতে'}
             >
               {lang === 'bn' ? 'English' : 'বাংলা'}
             </button>
@@ -528,26 +529,22 @@ export default function App() {
       </header>
 
       {/* RENDER SUCCESS RECEIPT AND DETAILS OVERLAY */}
-      <AnimatePresence>
-        {currentOrder && (
-          <div className="bg-slate-50 min-h-screen py-6 px-4">
-            <OrderReceipt 
-              order={currentOrder} 
-              onNewShopping={handleNewShopping} 
-              lang={lang} 
-            />
-          </div>
-        )}
-      </AnimatePresence>
+      {currentOrder && (
+        <div className="bg-slate-50 min-h-screen py-6 px-4">
+          <OrderReceipt 
+            order={currentOrder} 
+            onNewShopping={handleNewShopping} 
+            lang={lang} 
+          />
+        </div>
+      )}
 
       {/* RENDER PRIMARY INTERFACE */}
       {!currentOrder && (
         <div className="max-w-7xl mx-auto px-4 md:px-6 mt-4">
           
           {/* HERO BANNER */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
             className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-5 md:p-7 text-white relative overflow-hidden mb-5 shadow-md"
           >
             {/* Background elements */}
@@ -586,7 +583,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* DUAL COLUMN MAIN LAYOUT:
               - Left 2/3: Products listing
@@ -601,7 +598,7 @@ export default function App() {
                 
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                   <input
                     id="product-search-input"
                     type="text"
@@ -609,12 +606,14 @@ export default function App() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={lang === 'bn' ? 'প্রোডাক্ট খুঁজুন (Smartwatch, Earbuds)...' : 'Search items (e.g. Earbuds, Leather)...'}
                     className="w-full pl-9 pr-9 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:bg-white transition-all text-slate-800"
+                    aria-label={lang === 'bn' ? 'প্রোডাক্ট খুঁজুন' : 'Search Products'}
                   />
                   {searchQuery && (
                     <button
                       id="clear-search-btn"
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full"
+                      aria-label={lang === 'bn' ? 'সার্চ মুছুন' : 'Clear search'}
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -650,7 +649,7 @@ export default function App() {
 
                   {/* Sorting Menu */}
                   <div className="flex items-center gap-1.5 shrink-0 border-t sm:border-t-0 pt-1.5 sm:pt-0 border-slate-100">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                       {lang === 'bn' ? 'ক্রমানুসারে:' : 'Sort:'}
                     </span>
                     <div className="relative">
@@ -659,13 +658,14 @@ export default function App() {
                         value={sortBy}
                         onChange={(e: any) => setSortBy(e.target.value)}
                         className="appearance-none bg-slate-50 border border-slate-200 rounded-lg pl-2.5 pr-7 py-1.5 text-[11px] font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                        aria-label={lang === 'bn' ? 'প্রোডাক্ট সাজানোর পদ্ধতি' : 'Sort products'}
                       >
                         <option value="default">{lang === 'bn' ? 'ডিফল্ট' : 'Default'}</option>
                         <option value="price-asc">{lang === 'bn' ? 'দাম: কম থেকে বেশি' : 'Price: Low to High'}</option>
                         <option value="price-desc">{lang === 'bn' ? 'দাম: বেশি থেকে কম' : 'Price: High to Low'}</option>
                         <option value="rating">{lang === 'bn' ? 'জনপ্রিয়তা' : 'Top Rated'}</option>
                       </select>
-                      <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <ChevronDown className="w-3 h-3 text-slate-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                   </div>
 
@@ -689,22 +689,19 @@ export default function App() {
                   </p>
                 </div>
               ) : (
-                <motion.div
-                  layout
+                <div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
                 >
-                  <AnimatePresence mode="popLayout">
-                    {sortedProducts.map((product) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        onAddToCart={handleAddToCart}
-                        onQuickView={setQuickViewProduct}
-                        lang={lang}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </motion.div>
+                  {sortedProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onQuickView={setQuickViewProduct}
+                      lang={lang}
+                    />
+                  ))}
+                </div>
               )}
 
             </div>
@@ -729,32 +726,25 @@ export default function App() {
                 {/* Main Cart Items Loop */}
                 {cart.length === 0 ? (
                   <div className="text-center py-6">
-                    <motion.div
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                      className="mx-auto w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mb-2"
+                    <div
+                      className="mx-auto w-10 h-10 bg-slate-50 text-slate-500 rounded-full flex items-center justify-center mb-2"
                     >
                       <ShoppingBag className="w-5 h-5" />
-                    </motion.div>
+                    </div>
                     <p className="text-xs text-slate-500 font-medium">
                       {lang === 'bn' ? 'আপনার কার্ট খালি আছে।' : 'Your cart is currently empty.'}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5 max-w-[180px] mx-auto">
+                    <p className="text-[10px] text-slate-500 mt-0.5 max-w-[180px] mx-auto">
                       {lang === 'bn' ? 'বাম দিক থেকে প্রোডাক্টগুলো কার্টে যোগ করুন!' : 'Select and add your desired items to order!'}
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-2.5 max-h-[180px] overflow-y-auto pr-1 divide-y divide-slate-100">
-                    <AnimatePresence initial={false}>
-                      {cart.map((item) => (
-                        <motion.div
-                          key={item.product.id}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-center justify-between gap-2.5 pt-2.5 first:pt-0 group/item"
-                        >
+                    {cart.map((item) => (
+                      <div
+                        key={item.product.id}
+                        className="flex items-center justify-between gap-2.5 pt-2.5 first:pt-0 group/item"
+                      >
                           {/* Mini Thumbnail */}
                           <div className="flex items-center gap-2 flex-1 min-w-0">
                             <img
@@ -781,6 +771,7 @@ export default function App() {
                                 id={`qty-dec-${item.product.id}`}
                                 onClick={() => handleUpdateQuantity(item.product.id, 'decrement')}
                                 className="p-0.5 hover:bg-white hover:text-indigo-600 rounded transition-colors"
+                                aria-label={lang === 'bn' ? 'পরিমাণ কমান' : 'Decrease quantity'}
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
@@ -791,6 +782,7 @@ export default function App() {
                                 id={`qty-inc-${item.product.id}`}
                                 onClick={() => handleUpdateQuantity(item.product.id, 'increment')}
                                 className="p-0.5 hover:bg-white hover:text-indigo-600 rounded transition-colors"
+                                aria-label={lang === 'bn' ? 'পরিমাণ বাড়ান' : 'Increase quantity'}
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -800,17 +792,17 @@ export default function App() {
                             <button
                               id={`remove-cart-item-${item.product.id}`}
                               onClick={() => handleRemoveItem(item.product.id, item.quantity)}
-                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all scale-90"
+                              className="p-1 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded transition-all scale-90"
                               title={lang === 'bn' ? 'মুছে ফেলুন' : 'Remove'}
+                              aria-label={lang === 'bn' ? 'কার্ট থেকে মুছে ফেলুন' : 'Remove item from cart'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
-                    </AnimatePresence>
-                  </div>
-                )}
+                    </div>
+                  )}
 
                 {/* Form Errors for Cart */}
                 {formErrors.cart && (
@@ -822,12 +814,12 @@ export default function App() {
                 {/* PROMO CODE GATEWAY */}
                 {cart.length > 0 && (
                   <div className="border-t border-slate-200 pt-3 space-y-1.5">
-                    <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
+                    <label htmlFor="promo-code-input" className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">
                       {lang === 'bn' ? 'প্রোমো কোড (কুপন)' : 'Promo Code (Coupon)'}
                     </label>
                     <div className="flex gap-1.5">
                       <div className="relative flex-1">
-                        <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                        <Tag className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
                         <input
                           id="promo-code-input"
                           type="text"
@@ -835,7 +827,7 @@ export default function App() {
                           onChange={(e) => setPromoInput(e.target.value)}
                           disabled={!!appliedPromo}
                           placeholder="SAVE100"
-                          className="w-full pl-8 pr-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs uppercase focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400 font-bold"
+                          className="w-full pl-8 pr-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs uppercase focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-500 font-bold"
                         />
                       </div>
                       {appliedPromo ? (
@@ -875,7 +867,7 @@ export default function App() {
 
                     {/* Delivery Location selector that recalculates shipping */}
                     <div className="flex items-center justify-between border-y border-slate-100 py-1.5 my-1">
-                      <span className="font-medium text-[10px] text-slate-400 uppercase tracking-wider">
+                      <span className="font-medium text-[10px] text-slate-500 uppercase tracking-wider">
                         {lang === 'bn' ? 'ডেলিভারি এলাকা:' : 'Delivery Area:'}
                       </span>
                       <div className="flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-slate-200">
@@ -931,18 +923,18 @@ export default function App() {
                       <User className="w-4 h-4 text-indigo-600" />
                       {lang === 'bn' ? 'বিলিং ও ডেলিভারি বিবরণ' : 'Billing & Delivery Info'}
                     </h3>
-                    <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+                    <p className="text-[10px] text-slate-500 font-bold mt-0.5">
                       {lang === 'bn' ? 'দয়া করে নিচের তথ্যাদি দিয়ে অর্ডার সম্পন্ন করুন।' : 'Please fill accurate fields below to place order immediately.'}
                     </p>
                   </div>
 
                   {/* Customer Name */}
                   <div className="space-y-1" id="input-name">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                    <label htmlFor="billing-name-input" className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
                       {lang === 'bn' ? 'আপনার পূর্ণ নাম' : 'Full Name'} <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <User className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <User className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         id="billing-name-input"
                         type="text"
@@ -961,11 +953,11 @@ export default function App() {
 
                   {/* Customer Phone */}
                   <div className="space-y-1" id="input-phone">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                    <label htmlFor="billing-phone-input" className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
                       {lang === 'bn' ? 'সচল মোবাইল নম্বর' : 'Active Mobile Number'} <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Phone className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         id="billing-phone-input"
                         type="tel"
@@ -986,7 +978,7 @@ export default function App() {
                   {/* Customer Address */}
                   <div className="space-y-1" id="input-address">
                     <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
-                      {lang === 'bn' ? 'বিস্তারিত ডেলিভারি ঠিকানা' : 'Full Delivery Address'} <span className="text-rose-500">*</span>
+                      {lang === 'bn' ? 'ডেলিভারি ঠিকানা লিখুন' : 'Full Delivery Address'} <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -1076,9 +1068,7 @@ export default function App() {
 
                   {/* Manual Payment Verification form (If bKash, Nagad or Rocket is selected) */}
                   {paymentMethod !== 'cod' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -6 }}
-                      animate={{ opacity: 1, y: 0 }}
+                    <div
                       className="p-3 bg-slate-50 border border-dashed border-slate-200 rounded-lg space-y-2.5"
                     >
                       <div className="text-xs space-y-1 text-slate-700">
@@ -1101,7 +1091,7 @@ export default function App() {
 
                       {/* Sender MFS Number */}
                       <div className="space-y-0.5" id="input-mfsNumber">
-                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label htmlFor="mfs-phone-input" className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
                           {lang === 'bn' ? 'আপনার বিকাশ/নগদ/রকেট নম্বর' : 'Your Sender Wallet No.'} <span className="text-rose-500">*</span>
                         </label>
                         <input
@@ -1120,7 +1110,7 @@ export default function App() {
 
                       {/* Transaction ID */}
                       <div className="space-y-0.5" id="input-mfsTrxId">
-                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label htmlFor="mfs-trxid-input" className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
                           {lang === 'bn' ? 'ট্রানজেকশন আইডি (TrxID)' : 'Transaction ID (TrxID)'} <span className="text-rose-500">*</span>
                         </label>
                         <input
@@ -1135,7 +1125,7 @@ export default function App() {
                           <p className="text-[10px] font-semibold text-rose-500">{formErrors.mfsTrxId}</p>
                         )}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
 
                   {/* Submission Place Order Button */}
@@ -1159,12 +1149,12 @@ export default function App() {
 
       {/* FOOTER COPYRIGHT AND SOCIALS */}
       <footer className="max-w-7xl mx-auto px-4 md:px-8 mt-16 pt-8 border-t border-gray-200/60 text-center space-y-3">
-        <p className="text-xs text-gray-400 font-medium">
+        <p className="text-xs text-gray-500 font-medium">
           {lang === 'bn' 
             ? '© ২০২৬ আমার বাজার ই-কমার্স প্ল্যাটফর্ম। সর্বস্বত্ব সংরক্ষিত।' 
             : '© 2026 Amar Bazar E-Commerce Platform. All rights reserved.'}
         </p>
-        <div className="flex justify-center gap-4 text-xs font-semibold text-gray-400">
+        <div className="flex justify-center gap-4 text-xs font-semibold text-gray-500">
           <a href="#" className="hover:text-emerald-600 transition-colors">{lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}</a>
           <span>•</span>
           <a href="#" className="hover:text-emerald-600 transition-colors">{lang === 'bn' ? 'শর্তাবলী' : 'Terms & Conditions'}</a>
@@ -1174,26 +1164,19 @@ export default function App() {
       </footer>
 
       {/* QUICK VIEW DETAILS MODAL */}
-      <AnimatePresence>
-        {quickViewProduct && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setQuickViewProduct(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-            
-            {/* Modal Box */}
-            <motion.div
-              id={`quickview-modal-${quickViewProduct.id}`}
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-xl overflow-hidden max-w-xl w-full shadow-md relative z-10 flex flex-col md:flex-row border border-slate-200"
-            >
+      {quickViewProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            onClick={() => setQuickViewProduct(null)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
+          />
+          
+          {/* Modal Box */}
+          <div
+            id={`quickview-modal-${quickViewProduct.id}`}
+            className="bg-white rounded-xl overflow-hidden max-w-xl w-full shadow-md relative z-10 flex flex-col md:flex-row border border-slate-200"
+          >
               <button
                 id="close-quickview-btn"
                 onClick={() => setQuickViewProduct(null)}
@@ -1224,7 +1207,7 @@ export default function App() {
                     <div className="flex items-center gap-0.5 text-[10px]">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       <span className="font-bold text-slate-800">{quickViewProduct.rating}</span>
-                      <span className="text-slate-400">({quickViewProduct.reviewsCount})</span>
+                      <span className="text-slate-500">({quickViewProduct.reviewsCount})</span>
                     </div>
                   </div>
 
@@ -1235,16 +1218,16 @@ export default function App() {
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className="text-base font-black text-slate-900">৳{quickViewProduct.price}</span>
                     {quickViewProduct.originalPrice && (
-                      <span className="text-xs text-slate-400 line-through">৳{quickViewProduct.originalPrice}</span>
+                      <span className="text-xs text-slate-500 line-through">৳{quickViewProduct.originalPrice}</span>
                     )}
                   </div>
 
-                  <p className="text-[11px] text-slate-500 leading-normal mb-3">
+                  <p className="text-[11px] text-slate-600 leading-normal mb-3">
                     {lang === 'bn' ? quickViewProduct.descriptionBn : quickViewProduct.description}
                   </p>
 
                   {/* Stock availability banner */}
-                  <div className="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-200 p-2 rounded-lg mb-3">
+                  <div className="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 p-2 rounded-lg mb-3">
                     {lang === 'bn' ? 'স্টক স্থিতি:' : 'Availability:'}{' '}
                     {tempStock[quickViewProduct.id] > 0 ? (
                       <span className="text-indigo-600 font-extrabold">{lang === 'bn' ? `স্টক আছে (${tempStock[quickViewProduct.id]} টি)` : `In Stock (${tempStock[quickViewProduct.id]} items)`}</span>
@@ -1264,44 +1247,36 @@ export default function App() {
                     }}
                     className={`w-full py-2 rounded-lg font-bold text-xs text-white transition-all shadow-xs flex items-center justify-center gap-1.5 ${
                       tempStock[quickViewProduct.id] <= 0
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                         : 'bg-indigo-600 hover:bg-indigo-700'
                     }`}
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />
                     {lang === 'bn' ? 'কার্টে যুক্ত করুন' : 'Add to Shopping Cart'}
                   </button>
-                  <p className="text-[9px] text-slate-400 text-center font-medium">
+                  <p className="text-[9px] text-slate-500 text-center font-medium">
                     {lang === 'bn' ? '২-৩ দিনের মধ্যে হোম ডেলিভারি!' : 'Get home delivery in 2-3 business days!'}
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
 
       {/* TRACK PREVIOUS ORDERS DRAWER MODAL */}
-      <AnimatePresence>
-        {showHistoryModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowHistoryModal(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-            
-            {/* Modal Box */}
-            <motion.div
-              id="history-tracking-modal"
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-xl overflow-hidden max-w-xl w-full shadow-md relative z-10 p-5 space-y-3.5 border border-slate-200"
-            >
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            onClick={() => setShowHistoryModal(false)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
+          />
+          
+          {/* Modal Box */}
+          <div
+            id="history-tracking-modal"
+            className="bg-white rounded-xl overflow-hidden max-w-xl w-full shadow-md relative z-10 p-5 space-y-3.5 border border-slate-200"
+          >
               <div className="flex items-center justify-between border-b pb-2.5 border-slate-200">
                 <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <History className="w-4 h-4 text-indigo-600" />
@@ -1328,10 +1303,9 @@ export default function App() {
                   ? 'পূর্ববর্তী যেকোনো অর্ডারের ইনভয়েস ডাউনলোড করতে আইকনে ক্লিক করুন।'
                   : 'Click on order items to open complete invoice and delivery timelines.'}
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
 
       {/* Live tracking and diagnostic dashboard */}
       <PixelDebugger lang={lang} />

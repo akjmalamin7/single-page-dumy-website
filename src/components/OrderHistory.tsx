@@ -1,5 +1,4 @@
-import { motion } from 'motion/react';
-import { ShoppingBag, Eye, Calendar, Clock, MapPin, CreditCard, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Eye, Calendar, Clock, MapPin, CreditCard } from 'lucide-react';
 import { Order } from '../types';
 
 interface OrderHistoryProps {
@@ -45,13 +44,11 @@ export default function OrderHistory({ orders, onSelectOrder, lang }: OrderHisto
   if (orders.length === 0) {
     return (
       <div className="text-center py-8 px-4 bg-white rounded-xl border border-slate-200 shadow-xs">
-        <motion.div
-          animate={{ scale: [0.97, 1.03, 0.97] }}
-          transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+        <div
           className="mx-auto w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-3"
         >
           <ShoppingBag className="w-6 h-6" />
-        </motion.div>
+        </div>
         <h3 className="text-xs font-bold text-slate-800 mb-0.5">
           {lang === 'bn' ? 'কোনো পূর্ববর্তী অর্ডার নেই!' : 'No previous orders found!'}
         </h3>
@@ -73,11 +70,10 @@ export default function OrderHistory({ orders, onSelectOrder, lang }: OrderHisto
 
       <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
         {orders.map((order) => (
-          <motion.div
+          <div
             key={order.id}
             id={`history-order-${order.id}`}
-            whileHover={{ scale: 1.005, x: 1 }}
-            className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs hover:shadow-sm transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 group cursor-pointer"
+            className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs hover:shadow-sm transition-all flex flex-col md:flex-row md:items-center justify-between gap-3 group cursor-pointer hover:translate-x-0.5"
             onClick={() => onSelectOrder(order)}
           >
             <div className="space-y-1">
@@ -97,21 +93,21 @@ export default function OrderHistory({ orders, onSelectOrder, lang }: OrderHisto
               </p>
 
               {/* Mini detail indicators */}
-              <div className="flex items-center gap-2 text-[10px] text-slate-400 flex-wrap font-medium">
+              <div className="flex items-center gap-2 text-[10px] text-slate-600 flex-wrap font-medium">
                 <span className="flex items-center gap-0.5">
-                  <Calendar className="w-3 h-3 text-slate-400" />
+                  <Calendar className="w-3 h-3 text-slate-500" />
                   {new Date(order.orderDate).toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US')}
                 </span>
                 <span className="flex items-center gap-0.5">
-                  <Clock className="w-3 h-3 text-slate-400" />
+                  <Clock className="w-3 h-3 text-slate-500" />
                   {new Date(order.orderDate).toLocaleTimeString(lang === 'bn' ? 'bn-BD' : 'en-US', {hour: '2-digit', minute:'2-digit'})}
                 </span>
                 <span className="flex items-center gap-0.5">
-                  <MapPin className="w-3 h-3 text-slate-400" />
+                  <MapPin className="w-3 h-3 text-slate-500" />
                   {order.customerInfo.city}
                 </span>
                 <span className="flex items-center gap-0.5">
-                  <CreditCard className="w-3 h-3 text-slate-400" />
+                  <CreditCard className="w-3 h-3 text-slate-500" />
                   {getPaymentName(order.customerInfo.paymentMethod)}
                 </span>
               </div>
@@ -120,7 +116,7 @@ export default function OrderHistory({ orders, onSelectOrder, lang }: OrderHisto
             {/* Price & View CTA */}
             <div className="flex items-center justify-between md:justify-end gap-2.5 pt-2.5 md:pt-0 border-t md:border-t-0 border-slate-100">
               <div className="text-left md:text-right">
-                <span className="text-[9px] text-slate-400 block font-bold uppercase tracking-wider">{lang === 'bn' ? 'পরিশোধিত মূল্য' : 'Amount'}</span>
+                <span className="text-[9px] text-slate-500 block font-bold uppercase tracking-wider">{lang === 'bn' ? 'পরিশোধিত মূল্য' : 'Amount'}</span>
                 <span className="text-xs font-black text-slate-900">৳{order.finalAmount}</span>
               </div>
               <button
@@ -131,11 +127,12 @@ export default function OrderHistory({ orders, onSelectOrder, lang }: OrderHisto
                 }}
                 className="p-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors"
                 title={lang === 'bn' ? 'ইনভয়েস দেখুন' : 'View Invoice'}
+                aria-label={lang === 'bn' ? 'ইনভয়েস দেখুন' : 'View Invoice'}
               >
                 <Eye className="w-3.5 h-3.5" />
               </button>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>

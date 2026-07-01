@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { 
   Activity, 
   Settings, 
@@ -120,12 +119,10 @@ export const PixelDebugger: React.FC<PixelDebuggerProps> = ({ lang }) => {
   return (
     <>
       {/* Floating Trigger Button */}
-      <motion.button
+      <button
         id="pixel-tracker-debug-trigger"
         onClick={() => setIsOpen(true)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-4 right-4 z-50 bg-indigo-950 text-white rounded-full p-3 shadow-lg flex items-center gap-2 border border-indigo-800 hover:bg-indigo-900 transition-all font-sans cursor-pointer"
+        className="fixed bottom-4 right-4 z-50 bg-indigo-950 text-white rounded-full p-3 shadow-lg flex items-center gap-2 border border-indigo-800 hover:bg-indigo-900 transition-all hover:scale-105 active:scale-95 duration-155 font-sans cursor-pointer"
         title={lang === 'bn' ? 'পিক্সেল ট্র্যাকার লাইভ মনিটর' : 'Pixel Tracker Live Monitor'}
       >
         <span className="relative flex h-2 w-2">
@@ -136,29 +133,21 @@ export const PixelDebugger: React.FC<PixelDebuggerProps> = ({ lang }) => {
         <span className="text-[10px] font-bold tracking-wider uppercase">
           {lang === 'bn' ? 'পিক্সেল ট্র্যাকার' : 'Pixel Tracker'}
         </span>
-      </motion.button>
+      </button>
 
       {/* Drawer Panel */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black z-50 cursor-pointer"
-            />
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/40 z-50 cursor-pointer"
+          />
 
-            {/* Sidebar Drawer */}
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-55 border-l border-slate-200 flex flex-col font-sans"
-            >
+          {/* Sidebar Drawer */}
+          <div
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-55 border-l border-slate-200 flex flex-col font-sans"
+          >
               {/* Header */}
               <div className="p-4 bg-indigo-950 text-white flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -277,31 +266,26 @@ export const PixelDebugger: React.FC<PixelDebuggerProps> = ({ lang }) => {
                             </div>
 
                             {/* Event JSON Payload */}
-                            <AnimatePresence>
-                              {selectedEvent?.id === event.id && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  className="border-t border-slate-150 bg-slate-900 p-3 text-emerald-400 font-mono text-[10px] overflow-x-auto whitespace-pre-wrap leading-normal"
-                                >
-                                  <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2 font-sans font-bold">
-                                    <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider text-slate-400">
-                                      <Code className="w-3 h-3 text-slate-500" />
-                                      Event Payload Data
-                                    </span>
-                                    <button 
-                                      id="copy-payload-btn"
-                                      onClick={() => navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))}
-                                      className="hover:text-white transition-colors text-[9px] cursor-pointer"
-                                    >
-                                      {lang === 'bn' ? 'কপি করুন' : 'Copy'}
-                                    </button>
-                                  </div>
-                                  {JSON.stringify(event.payload, null, 2)}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            {selectedEvent?.id === event.id && (
+                              <div
+                                className="border-t border-slate-150 bg-slate-900 p-3 text-emerald-400 font-mono text-[10px] overflow-x-auto whitespace-pre-wrap leading-normal"
+                              >
+                                <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5 mb-2 font-sans font-bold">
+                                  <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider text-slate-400">
+                                    <Code className="w-3 h-3 text-slate-500" />
+                                    Event Payload Data
+                                  </span>
+                                  <button 
+                                    id="copy-payload-btn"
+                                    onClick={() => navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))}
+                                    className="hover:text-white transition-colors text-[9px] cursor-pointer"
+                                  >
+                                    {lang === 'bn' ? 'কপি করুন' : 'Copy'}
+                                  </button>
+                                </div>
+                                {JSON.stringify(event.payload, null, 2)}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -502,10 +486,9 @@ export const PixelDebugger: React.FC<PixelDebuggerProps> = ({ lang }) => {
               <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                 Powered by Amar Bazar Tracking Engine
               </div>
-            </motion.div>
+            </div>
           </>
         )}
-      </AnimatePresence>
     </>
   );
 };
